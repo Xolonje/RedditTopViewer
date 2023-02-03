@@ -15,9 +15,14 @@ import android.view.MenuItem;
 
 import com.example.reddittopviewer.databinding.ActivityScrollingBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ScrollingActivity extends AppCompatActivity {
 
     private ActivityScrollingBinding binding;
+
+    Reddit_top Top;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,13 @@ public class ScrollingActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
         toolBarLayout.setTitle(getTitle());
+        Top.JSONFetch("https://www.reddit.com/top.json");
+        try {
+            Top.JSONChildren("children");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        Top.ShowPosts(this);
     }
 
     @Override
