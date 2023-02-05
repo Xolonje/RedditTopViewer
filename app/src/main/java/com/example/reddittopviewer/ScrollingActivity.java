@@ -1,5 +1,6 @@
 package com.example.reddittopviewer;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -9,14 +10,18 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.loader.content.AsyncTaskLoader;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.reddittopviewer.databinding.ActivityScrollingBinding;
 
 import org.jetbrains.annotations.Contract;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,58 +33,31 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
 public class ScrollingActivity extends AppCompatActivity {
+
+    private ActivityScrollingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        com.example.reddittopviewer.databinding.ActivityScrollingBinding binding = ActivityScrollingBinding.inflate(getLayoutInflater());
+        binding = ActivityScrollingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
         toolBarLayout.setTitle(getTitle());
+        /*FloatingActionButton fab = binding.fab;
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });*/
+        new NetworkTask().execute("https://www.reddit.com/top.json");
 
-        new Thread(new Runnable() {
-            public void run(){
-                //txt1.setText("Thread!!");
-            }
-            public void main(String[] args){
-                URL Reddit_top;
-                try {
-                    Reddit_top = new URL("https://www.reddit.com/top.json");
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
-                JSONObject json  = JSONFetch(Reddit_top);
-                System.out.println(json);
-            }
-            @NonNull
-            private String readAll(@NonNull Reader rd) throws IOException {
-                StringBuilder sb = new StringBuilder();
-                int cp;
-                while ((cp = rd.read()) != -1) {
-                    sb.append((char) cp);
-                }
-                return sb.toString();
-            }
-
-            @NonNull
-            @Contract("_ -> new")
-            public JSONObject JSONFetch(URL url)//Imports the JSON file and fetches the data from it
-            {
-                try (InputStream is = url.openStream()) {
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                    String jsonText = readAll(rd);
-                    return new JSONObject(jsonText);
-                } catch (IOException | JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -90,7 +68,7 @@ public class ScrollingActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -103,3 +81,4 @@ public class ScrollingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
