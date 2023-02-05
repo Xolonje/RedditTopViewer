@@ -16,9 +16,17 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class NetworkTask extends AsyncTask<String, String, JSONObject> {
+public class NetworkTask extends AsyncTask<String, Void, JSONObject> {
 
-    private String readAll(@NonNull Reader rd) throws IOException {
+    public JSONObject JSON = doInBackground();
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @NonNull
+    String readAll(@NonNull Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
         while ((cp = rd.read()) != -1) {
@@ -28,7 +36,7 @@ public class NetworkTask extends AsyncTask<String, String, JSONObject> {
     }
 
     @Override
-    protected JSONObject doInBackground(String... strings) {
+    protected JSONObject doInBackground(@NonNull String... strings) {
         try {
             URL src = new URL(strings[0]);
             InputStream is = src.openStream();
@@ -38,5 +46,15 @@ public class NetworkTask extends AsyncTask<String, String, JSONObject> {
         } catch (IOException | JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
+    }
+
+    @Override
+    protected void onPostExecute(JSONObject jsonObject) {
+        super.onPostExecute(jsonObject);
     }
 }

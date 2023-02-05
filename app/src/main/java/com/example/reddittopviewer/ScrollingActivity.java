@@ -57,7 +57,6 @@ public class ScrollingActivity extends AppCompatActivity {
             }
         });*/
         new NetworkTask().execute("https://www.reddit.com/top.json");
-
     }
 
     @Override
